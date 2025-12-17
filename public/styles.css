@@ -533,6 +533,10 @@ h1 {
     z-index: 1000;
 }
 
+.hidden {
+    display: none !important;
+}
+
 .win-modal.hidden {
     display: none;
 }
