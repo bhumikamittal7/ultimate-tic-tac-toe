@@ -11,8 +11,14 @@
         <h1>Ultimate Tic-Tac-Toe</h1>
         <p class="subtitle">A strategic twist on the classic game!</p>
 
+        <!-- Game Mode Selection -->
+        <div class="game-mode-tabs">
+            <button id="local-tab" class="tab-btn active">👥 Local Multiplayer</button>
+            <button id="bot-tab" class="tab-btn">🤖 Play vs Bot</button>
+        </div>
+
         <!-- Local Multiplayer Setup -->
-        <div class="setup-section">
+        <div id="local-section" class="setup-section">
             <div class="setup-header">
                 <h3>🎮 Local Multiplayer</h3>
                 <p>Play with a friend on the same device!</p>
@@ -29,6 +35,54 @@
                 </div>
             </div>
             <button id="start-local-btn" class="btn primary large">Start Local Game</button>
+        </div>
+
+        <!-- Single Player vs Bot Setup -->
+        <div id="bot-section" class="setup-section hidden">
+            <div class="setup-header">
+                <h3>🤖 Play vs Bot</h3>
+                <p>Challenge the AI with different difficulty levels!</p>
+            </div>
+            <div class="player-setup">
+                <div class="player-card">
+                    <div class="player-symbol">👤</div>
+                    <input type="text" id="human-name" placeholder="Your Name" maxlength="15" value="Player">
+                </div>
+                <div class="vs-text">VS</div>
+                <div class="player-card">
+                    <div class="player-symbol">🤖</div>
+                    <div class="bot-name">AI Bot</div>
+                </div>
+            </div>
+
+            <div class="difficulty-selection">
+                <h4>Choose Difficulty:</h4>
+                <div class="difficulty-buttons">
+                    <button id="easy-btn" class="difficulty-btn active" data-difficulty="easy">
+                        <div class="difficulty-icon">😊</div>
+                        <div class="difficulty-info">
+                            <div class="difficulty-name">Easy</div>
+                            <div class="difficulty-desc">50% win chance</div>
+                        </div>
+                    </button>
+                    <button id="medium-btn" class="difficulty-btn" data-difficulty="medium">
+                        <div class="difficulty-icon">😐</div>
+                        <div class="difficulty-info">
+                            <div class="difficulty-name">Medium</div>
+                            <div class="difficulty-desc">75% win chance</div>
+                        </div>
+                    </button>
+                    <button id="hard-btn" class="difficulty-btn" data-difficulty="hard">
+                        <div class="difficulty-icon">😈</div>
+                        <div class="difficulty-info">
+                            <div class="difficulty-name">Hard</div>
+                            <div class="difficulty-desc">95% win chance</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+
+            <button id="start-bot-btn" class="btn primary large">Start Game vs Bot</button>
         </div>
 
         <!-- Online Multiplayer Coming Soon -->

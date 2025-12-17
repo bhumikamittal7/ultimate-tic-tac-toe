@@ -1,6 +1,20 @@
-// Get player names from localStorage
+// Get player names and game mode from localStorage
 const player1Name = localStorage.getItem('player1Name') || 'Player 1';
 const player2Name = localStorage.getItem('player2Name') || 'Player 2';
+const gameMode = localStorage.getItem('gameMode') || 'local';
+const botDifficulty = localStorage.getItem('botDifficulty') || 'easy';
+
+// Bot configuration
+const isBotGame = gameMode === 'bot';
+const botPlayerIndex = player2Name === 'AI Bot' ? 1 : 0; // Bot is always player 2 (O)
+const humanPlayerIndex = 1 - botPlayerIndex;
+
+// Bot win probabilities (chance to make optimal moves)
+const botWinChances = {
+    easy: 0.5,    // 50% chance to win/draw
+    medium: 0.75, // 75% chance to win/draw
+    hard: 0.95    // 95% chance to win/draw
+};
 
 // DOM elements
 const gameBoard = document.getElementById('game-board');
@@ -107,6 +121,11 @@ function handleCellClick(e) {
     const boardIndex = parseInt(cell.dataset.boardIndex);
     const cellIndex = parseInt(cell.dataset.cellIndex);
 
+    // Only allow human moves during their turn
+    if (isBotGame && gameState.currentPlayer === botPlayerIndex) {
+        return; // Bot's turn, don't allow human input
+    }
+
     // Make the move
     if (makeMove(boardIndex, cellIndex)) {
         // Re-render the board to show the move
@@ -121,9 +140,132 @@ function handleCellClick(e) {
             gameState.winner = overallWinner;
             showWinModal(overallWinner);
         } else {
-            updateDisplay();
+            // Check for tie (all boards are won but no overall winner)
+            const allBoardsWon = gameState.boardWinners.every(winner => winner !== null);
+            if (allBoardsWon) {
+                gameState.winner = 'tie';
+                showWinModal('tie');
+            } else {
+                updateDisplay();
+
+                // If it's bot's turn, make bot move after a delay
+                if (isBotGame && gameState.currentPlayer === botPlayerIndex) {
+                    setTimeout(makeBotMove, 800); // 800ms delay for bot move
+                }
+            }
         }
     }
+}
+
+// Bot move logic
+function makeBotMove() {
+    if (gameState.winner) return; // Game already over
+
+    const winChance = botWinChances[botDifficulty];
+    const botMove = calculateBotMove(winChance);
+
+    if (botMove) {
+        const { boardIndex, cellIndex } = botMove;
+
+        if (makeMove(boardIndex, cellIndex)) {
+            // Re-render the board to show the bot move
+            renderBoard();
+
+            // Switch turns back to human
+            gameState.currentPlayer = 1 - gameState.currentPlayer;
+
+            // Check for overall winner
+            const overallWinner = checkOverallWinner();
+            if (overallWinner) {
+                gameState.winner = overallWinner;
+                showWinModal(overallWinner);
+            } else {
+                // Check for tie (all boards are won but no overall winner)
+                const allBoardsWon = gameState.boardWinners.every(winner => winner !== null);
+                if (allBoardsWon) {
+                    gameState.winner = 'tie';
+                    showWinModal('tie');
+                } else {
+                    updateDisplay();
+                }
+            }
+        }
+    }
+}
+
+// Calculate bot move based on difficulty
+function calculateBotMove(winChance) {
+    const possibleMoves = getPossibleMoves();
+
+    if (possibleMoves.length === 0) return null;
+
+    // Random chance to make optimal move based on difficulty
+    if (Math.random() < winChance) {
+        // Make strategic move
+        return getBestMove(possibleMoves);
+    } else {
+        // Make random move
+        return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+    }
+}
+
+// Get all possible moves
+function getPossibleMoves() {
+    const moves = [];
+
+    for (let boardIndex = 0; boardIndex < 9; boardIndex++) {
+        // Check if we can play in this board
+        const canPlayInBoard = gameState.nextBoard === null || gameState.nextBoard === boardIndex;
+        if (!canPlayInBoard || gameState.boardWinners[boardIndex]) continue;
+
+        for (let cellIndex = 0; cellIndex < 9; cellIndex++) {
+            if (!gameState.board[boardIndex][cellIndex]) {
+                moves.push({ boardIndex, cellIndex });
+            }
+        }
+    }
+
+    return moves;
+}
+
+// Get the best strategic move (simplified AI)
+function getBestMove(possibleMoves) {
+    // Priority 1: Win the current small board if possible
+    for (const move of possibleMoves) {
+        const testBoard = gameState.board[move.boardIndex].slice();
+        testBoard[move.cellIndex] = 'O'; // Bot is O
+
+        if (checkSmallBoardWinner(testBoard) === 'O') {
+            return move; // Winning move
+        }
+    }
+
+    // Priority 2: Block human from winning small board
+    for (const move of possibleMoves) {
+        const testBoard = gameState.board[move.boardIndex].slice();
+        testBoard[move.cellIndex] = 'X'; // Human is X
+
+        if (checkSmallBoardWinner(testBoard) === 'X') {
+            return move; // Blocking move
+        }
+    }
+
+    // Priority 3: Prefer center of board
+    const centerMoves = possibleMoves.filter(move => move.cellIndex === 4);
+    if (centerMoves.length > 0) {
+        return centerMoves[0];
+    }
+
+    // Priority 4: Prefer corner moves
+    const cornerMoves = possibleMoves.filter(move =>
+        [0, 2, 6, 8].includes(move.cellIndex)
+    );
+    if (cornerMoves.length > 0) {
+        return cornerMoves[Math.floor(Math.random() * cornerMoves.length)];
+    }
+
+    // Fallback: Random move
+    return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
 }
 
 // Make a move
@@ -235,8 +377,19 @@ function findWinningCombination(boardWinners, winner) {
 // Show win modal
 function showWinModal(winner) {
     const winnerName = gameState.playerNames[winner === 'X' ? 0 : 1];
-    winTitle.textContent = `${winnerName} Wins!`;
-    winMessage.textContent = `Congratulations ${winnerName}! You won the Ultimate Tic-Tac-Toe game.`;
+    const isBotWinner = (winner === 'O' && isBotGame);
+
+    if (winner === 'tie') {
+        winTitle.textContent = "It's a Tie!";
+        winMessage.textContent = "Great game! Both players played well.";
+    } else if (isBotWinner) {
+        winTitle.textContent = "Bot Wins!";
+        winMessage.textContent = "The AI was too strong this time. Try again!";
+    } else {
+        winTitle.textContent = `${winnerName} Wins!`;
+        winMessage.textContent = `Congratulations ${winnerName}! You won the Ultimate Tic-Tac-Toe game.`;
+    }
+
     winModal.classList.remove('hidden');
 }
 
@@ -278,3 +431,8 @@ backToMenuBtn.addEventListener('click', () => {
 
 // Initialize the game
 initGame();
+
+// If bot goes first, make the first move
+if (isBotGame && gameState.currentPlayer === botPlayerIndex) {
+    setTimeout(makeBotMove, 1000); // Delay for dramatic effect
+}
