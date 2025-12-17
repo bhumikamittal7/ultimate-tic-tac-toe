@@ -11,25 +11,11 @@
         <h1>Ultimate Tic-Tac-Toe</h1>
         <p>A strategic twist on the classic game!</p>
 
-        <!-- Game Mode Selection -->
-        <div class="mode-selection">
-            <button id="local-mode-btn" class="mode-btn active">
-                <div class="mode-icon">👥</div>
-                <div class="mode-title">Local Multiplayer</div>
-                <div class="mode-desc">Play with a friend on the same device</div>
-            </button>
-            <button id="online-mode-btn" class="mode-btn">
-                <div class="mode-icon">🌐</div>
-                <div class="mode-title">Online Multiplayer</div>
-                <div class="mode-desc">Play online with anyone</div>
-            </button>
-        </div>
-
         <!-- Local Multiplayer Setup -->
-        <div id="local-setup" class="setup-section">
+        <div class="setup-section">
             <div class="setup-header">
-                <h3>🎮 Local Game Setup</h3>
-                <p>Enter player names and start playing!</p>
+                <h3>🎮 Local Multiplayer</h3>
+                <p>Play with a friend on the same device!</p>
             </div>
             <div class="player-setup">
                 <div class="player-card">
@@ -45,35 +31,15 @@
             <button id="start-local-btn" class="btn primary large">Start Local Game</button>
         </div>
 
-        <!-- Online Multiplayer Setup -->
-        <div id="online-setup" class="setup-section hidden">
-            <div class="setup-header">
-                <h3>🌐 Online Game Setup</h3>
-                <p>Enter your name and join or create a room!</p>
-            </div>
-
-            <div class="player-name-input">
-                <label for="online-player-name">Your Name:</label>
-                <input type="text" id="online-player-name" placeholder="Enter your name" maxlength="15">
-            </div>
-
-            <div class="online-options">
-                <button id="create-room-btn" class="btn primary">Create New Room</button>
-                <div class="or-divider">
-                    <span>OR</span>
-                </div>
-                <div class="join-section">
-                    <input type="text" id="room-code" placeholder="Enter room code" maxlength="8">
-                    <button id="join-room-btn" class="btn secondary">Join Room</button>
-                </div>
-            </div>
-
-            <div class="platform-warning">
-                <div class="warning-icon">⚠️</div>
-                <div class="warning-text">
-                    <strong>Note:</strong> Online multiplayer may not work on free hosting platforms like Railway.
-                    Consider upgrading to a paid plan or using a different hosting service for full functionality.
-                </div>
+        <!-- Online Multiplayer Coming Soon -->
+        <div class="coming-soon-section">
+            <div class="coming-soon-content">
+                <h3>🌐 Online Multiplayer</h3>
+                <div class="coming-soon-icon">🚧</div>
+                <p><strong>Coming Soon!</strong></p>
+                <p>Online multiplayer requires a hosting platform that supports persistent connections and WebSockets properly.</p>
+                <p>Current free platforms like Railway don't maintain stable real-time connections. We're looking into better hosting solutions!</p>
+                <p>Stay tuned for updates! 🎯</p>
             </div>
         </div>
 
@@ -91,7 +57,6 @@
         </div>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

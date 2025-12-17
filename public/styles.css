@@ -38,51 +38,6 @@ h3 {
     margin-bottom: 1rem;
 }
 
-/* Mode Selection */
-.mode-selection {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin: 2rem 0;
-}
-
-.mode-btn {
-    padding: 2rem 1rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    background: white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-align: center;
-}
-
-.mode-btn.active {
-    border-color: #007bff;
-    background: #f8f9ff;
-    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.1);
-}
-
-.mode-btn:hover {
-    border-color: #007bff;
-    transform: translateY(-2px);
-}
-
-.mode-icon {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.mode-title {
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-}
-
-.mode-desc {
-    font-size: 0.9rem;
-    color: #666;
-}
-
 /* Setup Sections */
 .setup-section {
     background: #f8f9fa;
@@ -142,89 +97,30 @@ h3 {
     color: #666;
 }
 
-/* Online Setup */
-.player-name-input {
-    margin-bottom: 2rem;
-}
-
-.player-name-input label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-}
-
-.player-name-input input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-.online-options {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-}
-
-.or-divider {
-    position: relative;
-    width: 100%;
+/* Coming Soon Section */
+.coming-soon-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    border: 2px dashed #dee2e6;
     text-align: center;
+}
+
+.coming-soon-content h3 {
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.coming-soon-icon {
+    font-size: 3rem;
     margin: 1rem 0;
 }
 
-.or-divider::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: #ddd;
-}
-
-.or-divider span {
-    background: #f8f9fa;
-    padding: 0 1rem;
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.join-section {
-    display: flex;
-    gap: 0.5rem;
-    width: 100%;
-    max-width: 300px;
-}
-
-.join-section input {
-    flex: 1;
-    padding: 0.75rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-}
-
-.platform-warning {
-    display: flex;
-    gap: 0.75rem;
-    background: #fff3cd;
-    border: 1px solid #ffeaa7;
-    border-radius: 6px;
-    padding: 1rem;
-    margin-top: 1.5rem;
-}
-
-.warning-icon {
-    font-size: 1.5rem;
-}
-
-.warning-text {
-    font-size: 0.9rem;
-    color: #856404;
-    line-height: 1.4;
+.coming-soon-content p {
+    color: #6c757d;
+    margin-bottom: 0.75rem;
+    line-height: 1.5;
 }
 
 /* Button Sizes */
