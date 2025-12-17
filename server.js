@@ -19,6 +19,10 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
+app.get('/local-game.html', (req, res) => {
+  res.sendFile(__dirname + '/public/local-game.html');
+});
+
 app.get('/room/:roomId', (req, res) => {
   res.sendFile(__dirname + '/public/game.html');
 });

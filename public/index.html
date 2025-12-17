@@ -12,10 +12,30 @@
         <p>A strategic twist on the classic game!</p>
 
         <div class="menu">
-            <button id="create-room-btn" class="btn primary">Create New Room</button>
-            <div class="join-room">
-                <input type="text" id="room-code" placeholder="Enter room code" maxlength="8">
-                <button id="join-room-btn" class="btn secondary">Join Room</button>
+            <!-- Local Multiplayer -->
+            <div class="local-play-section">
+                <h3>🎮 Local Multiplayer (Same Device)</h3>
+                <div class="player-inputs">
+                    <div class="player-input">
+                        <label for="player1-name">Player 1 (X):</label>
+                        <input type="text" id="player1-name" placeholder="Enter name" maxlength="20">
+                    </div>
+                    <div class="player-input">
+                        <label for="player2-name">Player 2 (O):</label>
+                        <input type="text" id="player2-name" placeholder="Enter name" maxlength="20">
+                    </div>
+                </div>
+                <button id="local-play-btn" class="btn primary">Start Local Game</button>
+            </div>
+
+            <!-- Online Multiplayer -->
+            <div class="online-play-section">
+                <h3>🌐 Online Multiplayer</h3>
+                <button id="create-room-btn" class="btn secondary">Create New Room</button>
+                <div class="join-room">
+                    <input type="text" id="room-code" placeholder="Enter room code" maxlength="8">
+                    <button id="join-room-btn" class="btn secondary">Join Room</button>
+                </div>
             </div>
         </div>
 
