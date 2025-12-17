@@ -13,6 +13,7 @@ app.use(express.static('public'));
 // Store active games and rooms
 const games = new Map();
 const rooms = new Map();
+const playerNames = new Map(); // socket.id -> player name
 
 // Routes
 app.get('/', (req, res) => {
@@ -31,12 +32,19 @@ app.get('/room/:roomId', (req, res) => {
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
 
+  // Set player name
+  socket.on('set-player-name', (name) => {
+    playerNames.set(socket.id, name);
+    console.log(`Player ${socket.id} set name to: ${name}`);
+  });
+
   // Create new room
   socket.on('create-room', (callback) => {
     const roomId = uuidv4().substring(0, 8);
+    const playerName = playerNames.get(socket.id) || 'Anonymous';
     const room = {
       id: roomId,
-      players: [socket.id],
+      players: [{ id: socket.id, name: playerName }],
       gameState: null,
       status: 'waiting' // waiting, playing, finished
     };
@@ -44,7 +52,7 @@ io.on('connection', (socket) => {
     rooms.set(roomId, room);
     socket.join(roomId);
     callback({ roomId, success: true });
-    console.log(`Room created: ${roomId}`);
+    console.log(`Room created: ${roomId} by ${playerName}`);
   });
 
   // Join existing room (or create if doesn't exist)
@@ -69,8 +77,10 @@ io.on('connection', (socket) => {
     }
 
     // Check if player is already in the room
-    if (!room.players.includes(socket.id)) {
-      room.players.push(socket.id);
+    const playerExists = room.players.some(player => player.id === socket.id);
+    if (!playerExists) {
+      const playerName = playerNames.get(socket.id) || 'Anonymous';
+      room.players.push({ id: socket.id, name: playerName });
       socket.join(roomId);
     }
 
@@ -159,8 +169,8 @@ function startGame(roomId) {
 
   const room = rooms.get(roomId);
   io.to(roomId).emit('game-started', {
-    players: room.players,
-    yourTurn: room.players[0] === room.players[0] // first player goes first
+    players: room.players.map(player => ({ id: player.id, name: player.name })),
+    yourTurn: true // first player goes first
   });
 
   io.to(roomId).emit('game-update', {

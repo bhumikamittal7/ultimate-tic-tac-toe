@@ -32,6 +32,11 @@ const switchToLocalBtn = document.getElementById('switch-to-local-btn');
 
 // Initialize
 roomIdSpan.textContent = roomId;
+const playerName = localStorage.getItem('onlinePlayerName') || 'Anonymous';
+
+// Set player name on server
+socket.emit('set-player-name', playerName);
+
 connectionStatusSpan.textContent = '🔄 Connecting...';
 connectionStatusSpan.className = 'connection-status connecting';
 showStatus('Connecting to room...', 'info');
@@ -78,11 +83,18 @@ socket.emit('join-room', roomId, (response) => {
 
 // Socket event listeners
 socket.on('game-started', (data) => {
-    playerSymbol = data.players.indexOf(socket.id) === 0 ? 'X' : 'O';
-    playerSymbolSpan.textContent = playerSymbol;
+    // Find this player's symbol and info
+    const myPlayerIndex = data.players.findIndex(player => player.id === socket.id);
+    playerSymbol = myPlayerIndex === 0 ? 'X' : 'O';
+    const myPlayer = data.players[myPlayerIndex];
+    const opponent = data.players[1 - myPlayerIndex];
+
+    playerSymbolSpan.textContent = `${playerSymbol} (${myPlayer.name})`;
+    currentTurnSpan.textContent = `vs ${opponent.name}`;
+
     isMyTurn = data.yourTurn;
     updateTurnDisplay();
-    showStatus(`🎮 Game started! You are ${playerSymbol}. ${isMyTurn ? 'Your turn!' : 'Opponent\'s turn'}`, 'success');
+    showStatus(`🎮 Game started! You are ${playerSymbol} (${myPlayer.name}) vs ${opponent.name}`, 'success');
 });
 
 socket.on('game-update', (data) => {

@@ -11,34 +11,68 @@
         <h1>Ultimate Tic-Tac-Toe</h1>
         <p>A strategic twist on the classic game!</p>
 
-        <div class="menu">
-            <!-- Local Multiplayer -->
-            <div class="local-play-section">
-                <h3>🎮 Local Multiplayer (Same Device)</h3>
-                <p style="color: #666; margin-bottom: 1rem;">Recommended: Play with a friend on the same device</p>
-                <div class="player-inputs">
-                    <div class="player-input">
-                        <label for="player1-name">Player 1 (X):</label>
-                        <input type="text" id="player1-name" placeholder="Enter name" maxlength="20" value="Player 1">
-                    </div>
-                    <div class="player-input">
-                        <label for="player2-name">Player 2 (O):</label>
-                        <input type="text" id="player2-name" placeholder="Enter name" maxlength="20" value="Player 2">
-                    </div>
+        <!-- Game Mode Selection -->
+        <div class="mode-selection">
+            <button id="local-mode-btn" class="mode-btn active">
+                <div class="mode-icon">👥</div>
+                <div class="mode-title">Local Multiplayer</div>
+                <div class="mode-desc">Play with a friend on the same device</div>
+            </button>
+            <button id="online-mode-btn" class="mode-btn">
+                <div class="mode-icon">🌐</div>
+                <div class="mode-title">Online Multiplayer</div>
+                <div class="mode-desc">Play online with anyone</div>
+            </button>
+        </div>
+
+        <!-- Local Multiplayer Setup -->
+        <div id="local-setup" class="setup-section">
+            <div class="setup-header">
+                <h3>🎮 Local Game Setup</h3>
+                <p>Enter player names and start playing!</p>
+            </div>
+            <div class="player-setup">
+                <div class="player-card">
+                    <div class="player-symbol">❌</div>
+                    <input type="text" id="player1-name" placeholder="Player 1" maxlength="15" value="Player 1">
                 </div>
-                <button id="local-play-btn" class="btn primary">Start Local Game</button>
+                <div class="vs-text">VS</div>
+                <div class="player-card">
+                    <div class="player-symbol">⭕</div>
+                    <input type="text" id="player2-name" placeholder="Player 2" maxlength="15" value="Player 2">
+                </div>
+            </div>
+            <button id="start-local-btn" class="btn primary large">Start Local Game</button>
+        </div>
+
+        <!-- Online Multiplayer Setup -->
+        <div id="online-setup" class="setup-section hidden">
+            <div class="setup-header">
+                <h3>🌐 Online Game Setup</h3>
+                <p>Enter your name and join or create a room!</p>
             </div>
 
-            <!-- Online Multiplayer -->
-            <div class="online-play-section">
-                <h3>🌐 Online Multiplayer</h3>
-                <p style="color: #856404; background: #fff3cd; padding: 0.5rem; border-radius: 4px; margin-bottom: 1rem; font-size: 0.9rem;">
-                    ⚠️ Online multiplayer may not work on all hosting platforms
-                </p>
-                <button id="create-room-btn" class="btn secondary">Create New Room</button>
-                <div class="join-room">
+            <div class="player-name-input">
+                <label for="online-player-name">Your Name:</label>
+                <input type="text" id="online-player-name" placeholder="Enter your name" maxlength="15">
+            </div>
+
+            <div class="online-options">
+                <button id="create-room-btn" class="btn primary">Create New Room</button>
+                <div class="or-divider">
+                    <span>OR</span>
+                </div>
+                <div class="join-section">
                     <input type="text" id="room-code" placeholder="Enter room code" maxlength="8">
                     <button id="join-room-btn" class="btn secondary">Join Room</button>
+                </div>
+            </div>
+
+            <div class="platform-warning">
+                <div class="warning-icon">⚠️</div>
+                <div class="warning-text">
+                    <strong>Note:</strong> Online multiplayer may not work on free hosting platforms like Railway.
+                    Consider upgrading to a paid plan or using a different hosting service for full functionality.
                 </div>
             </div>
         </div>
