@@ -15,14 +15,15 @@
             <!-- Local Multiplayer -->
             <div class="local-play-section">
                 <h3>🎮 Local Multiplayer (Same Device)</h3>
+                <p style="color: #666; margin-bottom: 1rem;">Recommended: Play with a friend on the same device</p>
                 <div class="player-inputs">
                     <div class="player-input">
                         <label for="player1-name">Player 1 (X):</label>
-                        <input type="text" id="player1-name" placeholder="Enter name" maxlength="20">
+                        <input type="text" id="player1-name" placeholder="Enter name" maxlength="20" value="Player 1">
                     </div>
                     <div class="player-input">
                         <label for="player2-name">Player 2 (O):</label>
-                        <input type="text" id="player2-name" placeholder="Enter name" maxlength="20">
+                        <input type="text" id="player2-name" placeholder="Enter name" maxlength="20" value="Player 2">
                     </div>
                 </div>
                 <button id="local-play-btn" class="btn primary">Start Local Game</button>
@@ -31,6 +32,9 @@
             <!-- Online Multiplayer -->
             <div class="online-play-section">
                 <h3>🌐 Online Multiplayer</h3>
+                <p style="color: #856404; background: #fff3cd; padding: 0.5rem; border-radius: 4px; margin-bottom: 1rem; font-size: 0.9rem;">
+                    ⚠️ Online multiplayer may not work on all hosting platforms
+                </p>
                 <button id="create-room-btn" class="btn secondary">Create New Room</button>
                 <div class="join-room">
                     <input type="text" id="room-code" placeholder="Enter room code" maxlength="8">

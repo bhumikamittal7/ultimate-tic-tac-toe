@@ -20,6 +20,16 @@
                     <span id="current-turn">Waiting for opponent...</span>
                 </div>
             </div>
+
+            <!-- Connection Error Notice -->
+            <div id="connection-error" class="connection-error hidden">
+                <div class="error-content">
+                    <h3>⚠️ Connection Issue</h3>
+                    <p>Real-time multiplayer is not available on this hosting platform.</p>
+                    <p>Try the <strong>Local Multiplayer</strong> mode instead:</p>
+                    <button id="switch-to-local-btn" class="btn primary">Play Local Game</button>
+                </div>
+            </div>
         </div>
 
         <div id="game-board" class="game-board">

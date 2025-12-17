@@ -27,6 +27,8 @@ const currentTurnSpan = document.getElementById('current-turn');
 const statusDiv = document.getElementById('status');
 const copyLinkBtn = document.getElementById('copy-link-btn');
 const leaveGameBtn = document.getElementById('leave-game-btn');
+const connectionErrorDiv = document.getElementById('connection-error');
+const switchToLocalBtn = document.getElementById('switch-to-local-btn');
 
 // Initialize
 roomIdSpan.textContent = roomId;
@@ -34,8 +36,19 @@ connectionStatusSpan.textContent = '🔄 Connecting...';
 connectionStatusSpan.className = 'connection-status connecting';
 showStatus('Connecting to room...', 'info');
 
+// Connection timeout
+let connectionTimeout = setTimeout(() => {
+    if (!connected) {
+        connectionStatusSpan.textContent = '❌ Connection Failed';
+        connectionStatusSpan.className = 'connection-status error';
+        connectionErrorDiv.classList.remove('hidden');
+        showStatus('Unable to connect to game server. Try local multiplayer instead.', 'error');
+    }
+}, 10000); // 10 second timeout
+
 // Handle socket connection
 socket.on('connect', () => {
+    clearTimeout(connectionTimeout);
     connectionStatusSpan.textContent = '🟢 Connected';
     connectionStatusSpan.className = 'connection-status connected';
 });
@@ -44,6 +57,7 @@ socket.on('disconnect', () => {
     connectionStatusSpan.textContent = '🔴 Disconnected';
     connectionStatusSpan.className = 'connection-status error';
     showStatus('Lost connection to server', 'error');
+    connectionErrorDiv.classList.remove('hidden');
 });
 
 // Join the room
@@ -198,6 +212,15 @@ leaveGameBtn.addEventListener('click', () => {
     if (confirm('Are you sure you want to leave the game?')) {
         window.location.href = '/';
     }
+});
+
+// Switch to local game
+switchToLocalBtn.addEventListener('click', () => {
+    // Set default names for local game
+    localStorage.setItem('player1Name', 'Player 1');
+    localStorage.setItem('player2Name', 'Player 2');
+    localStorage.setItem('gameMode', 'local');
+    window.location.href = '/local-game.html';
 });
 
 // Status message display

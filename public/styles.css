@@ -402,6 +402,53 @@ h1 {
     justify-content: center;
 }
 
+/* Connection Error */
+.connection-error {
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+    text-align: center;
+}
+
+.connection-error.hidden {
+    display: none;
+}
+
+.connection-error h3 {
+    color: #856404;
+    margin-bottom: 0.5rem;
+}
+
+.connection-error p {
+    color: #856404;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.connection-status {
+    margin-left: 1rem;
+    font-size: 0.9rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+}
+
+.connection-status.connecting {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.connection-status.connected {
+    background: #d4edda;
+    color: #155724;
+}
+
+.connection-status.error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
     .container {
