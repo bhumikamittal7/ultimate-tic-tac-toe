@@ -16,10 +16,12 @@ let gameState = {
 };
 let playerSymbol = null;
 let isMyTurn = false;
+let connected = false;
 
 // DOM elements
 const gameBoard = document.getElementById('game-board');
 const roomIdSpan = document.getElementById('room-id');
+const connectionStatusSpan = document.getElementById('connection-status');
 const playerSymbolSpan = document.getElementById('player-symbol');
 const currentTurnSpan = document.getElementById('current-turn');
 const statusDiv = document.getElementById('status');
@@ -28,14 +30,35 @@ const leaveGameBtn = document.getElementById('leave-game-btn');
 
 // Initialize
 roomIdSpan.textContent = roomId;
+connectionStatusSpan.textContent = '🔄 Connecting...';
+connectionStatusSpan.className = 'connection-status connecting';
+showStatus('Connecting to room...', 'info');
+
+// Handle socket connection
+socket.on('connect', () => {
+    connectionStatusSpan.textContent = '🟢 Connected';
+    connectionStatusSpan.className = 'connection-status connected';
+});
+
+socket.on('disconnect', () => {
+    connectionStatusSpan.textContent = '🔴 Disconnected';
+    connectionStatusSpan.className = 'connection-status error';
+    showStatus('Lost connection to server', 'error');
+});
 
 // Join the room
 socket.emit('join-room', roomId, (response) => {
-    if (!response.success) {
+    if (response.success) {
+        connected = true;
+        showStatus(`✅ Connected! Waiting for another player... (${response.playerCount}/2)`, 'success');
+        playerSymbolSpan.textContent = `Waiting...`;
+    } else {
+        connectionStatusSpan.textContent = '❌ Error';
+        connectionStatusSpan.className = 'connection-status error';
         showStatus(response.message, 'error');
         setTimeout(() => {
             window.location.href = '/';
-        }, 2000);
+        }, 3000);
     }
 });
 
@@ -45,7 +68,7 @@ socket.on('game-started', (data) => {
     playerSymbolSpan.textContent = playerSymbol;
     isMyTurn = data.yourTurn;
     updateTurnDisplay();
-    showStatus('Game started! ' + (isMyTurn ? 'Your turn' : 'Opponent\'s turn'), 'success');
+    showStatus(`🎮 Game started! You are ${playerSymbol}. ${isMyTurn ? 'Your turn!' : 'Opponent\'s turn'}`, 'success');
 });
 
 socket.on('game-update', (data) => {
@@ -155,9 +178,9 @@ function updateTurnDisplay() {
 
 // Copy invite link
 copyLinkBtn.addEventListener('click', () => {
-    const inviteLink = `${window.location.origin}?room=${roomId}`;
+    const inviteLink = `${window.location.origin}/room/${roomId}`;
     navigator.clipboard.writeText(inviteLink).then(() => {
-        showStatus('Invite link copied to clipboard!', 'success');
+        showStatus('🎯 Room link copied! Share it with a friend to play.', 'success');
     }).catch(() => {
         // Fallback for older browsers
         const textArea = document.createElement('textarea');
@@ -166,7 +189,7 @@ copyLinkBtn.addEventListener('click', () => {
         textArea.select();
         document.execCommand('copy');
         document.body.removeChild(textArea);
-        showStatus('Invite link copied to clipboard!', 'success');
+        showStatus('🎯 Room link copied! Share it with a friend to play.', 'success');
     });
 });
 

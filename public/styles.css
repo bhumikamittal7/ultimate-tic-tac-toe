@@ -198,6 +198,36 @@ h1 {
     flex-wrap: wrap;
 }
 
+.room-info {
+    font-size: 1rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.connection-status {
+    font-size: 0.9rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.connection-status.connected {
+    background: #d4edda;
+    color: #155724;
+}
+
+.connection-status.connecting {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.connection-status.error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
 .player-info {
     font-size: 1.1rem;
     background: #f0f0f0;

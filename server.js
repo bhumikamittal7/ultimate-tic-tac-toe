@@ -47,13 +47,20 @@ io.on('connection', (socket) => {
     console.log(`Room created: ${roomId}`);
   });
 
-  // Join existing room
+  // Join existing room (or create if doesn't exist)
   socket.on('join-room', (roomId, callback) => {
-    const room = rooms.get(roomId);
+    let room = rooms.get(roomId);
 
+    // If room doesn't exist, create it
     if (!room) {
-      callback({ success: false, message: 'Room not found' });
-      return;
+      room = {
+        id: roomId,
+        players: [],
+        gameState: null,
+        status: 'waiting'
+      };
+      rooms.set(roomId, room);
+      console.log(`Room created: ${roomId}`);
     }
 
     if (room.players.length >= 2) {
@@ -61,8 +68,11 @@ io.on('connection', (socket) => {
       return;
     }
 
-    room.players.push(socket.id);
-    socket.join(roomId);
+    // Check if player is already in the room
+    if (!room.players.includes(socket.id)) {
+      room.players.push(socket.id);
+      socket.join(roomId);
+    }
 
     if (room.players.length === 2) {
       room.status = 'playing';
@@ -70,8 +80,8 @@ io.on('connection', (socket) => {
       startGame(roomId);
     }
 
-    callback({ success: true });
-    console.log(`Player joined room: ${roomId}`);
+    callback({ success: true, playerCount: room.players.length });
+    console.log(`Player joined room: ${roomId} (${room.players.length}/2 players)`);
   });
 
   // Handle game moves
