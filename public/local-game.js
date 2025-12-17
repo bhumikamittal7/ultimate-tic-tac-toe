@@ -11,9 +11,10 @@ const humanPlayerIndex = 1 - botPlayerIndex;
 
 // Bot win probabilities (chance to make optimal moves)
 const botWinChances = {
-    easy: 0.5,    // 50% chance to win/draw
-    medium: 0.75, // 75% chance to win/draw
-    hard: 0.95    // 95% chance to win/draw
+    easy: 0.5,       // 50% chance to win/draw
+    medium: 0.75,    // 75% chance to win/draw
+    hard: 0.95,      // 95% chance to win/draw
+    impossible: 1.0  // 100% chance - always optimal
 };
 
 // DOM elements
@@ -199,8 +200,8 @@ function calculateBotMove(winChance) {
 
     if (possibleMoves.length === 0) return null;
 
-    // Random chance to make optimal move based on difficulty
-    if (Math.random() < winChance) {
+    // For impossible mode, always make strategic moves
+    if (botDifficulty === 'impossible' || Math.random() < winChance) {
         // Make strategic move
         return getBestMove(possibleMoves);
     } else {
@@ -228,7 +229,7 @@ function getPossibleMoves() {
     return moves;
 }
 
-// Get the best strategic move (simplified AI)
+// Get the best strategic move (advanced AI)
 function getBestMove(possibleMoves) {
     // Priority 1: Win the current small board if possible
     for (const move of possibleMoves) {
@@ -250,13 +251,45 @@ function getBestMove(possibleMoves) {
         }
     }
 
-    // Priority 3: Prefer center of board
+    // Priority 3: Try to set up future wins (for impossible mode)
+    if (botDifficulty === 'impossible') {
+        // Check if this move creates a fork (two ways to win)
+        for (const move of possibleMoves) {
+            const testBoard = gameState.board[move.boardIndex].slice();
+            testBoard[move.cellIndex] = 'O';
+
+            // Count potential winning lines created by this move
+            let winningLines = 0;
+            const lines = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+                [0, 4, 8], [2, 4, 6] // diagonals
+            ];
+
+            for (const line of lines) {
+                const [a, b, c] = line;
+                const lineValues = [testBoard[a], testBoard[b], testBoard[c]];
+                const botCount = lineValues.filter(val => val === 'O').length;
+                const emptyCount = lineValues.filter(val => val === null).length;
+
+                if (botCount === 2 && emptyCount === 1) {
+                    winningLines++;
+                }
+            }
+
+            if (winningLines >= 2) {
+                return move; // Fork move!
+            }
+        }
+    }
+
+    // Priority 4: Prefer center of board
     const centerMoves = possibleMoves.filter(move => move.cellIndex === 4);
     if (centerMoves.length > 0) {
         return centerMoves[0];
     }
 
-    // Priority 4: Prefer corner moves
+    // Priority 5: Prefer corner moves (strategic positions)
     const cornerMoves = possibleMoves.filter(move =>
         [0, 2, 6, 8].includes(move.cellIndex)
     );
@@ -264,7 +297,39 @@ function getBestMove(possibleMoves) {
         return cornerMoves[Math.floor(Math.random() * cornerMoves.length)];
     }
 
-    // Fallback: Random move
+    // Priority 6: Avoid moves that help opponent
+    if (botDifficulty === 'impossible') {
+        // Filter out moves that would give opponent a winning opportunity
+        const safeMoves = possibleMoves.filter(move => {
+            const testBoard = gameState.board[move.boardIndex].slice();
+            testBoard[move.cellIndex] = 'X'; // Simulate opponent move
+
+            // Check if this creates a dangerous position for opponent
+            const lines = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            for (const line of lines) {
+                const [a, b, c] = line;
+                const lineValues = [testBoard[a], testBoard[b], testBoard[c]];
+                const xCount = lineValues.filter(val => val === 'X').length;
+                const emptyCount = lineValues.filter(val => val === null).length;
+
+                if (xCount === 2 && emptyCount === 1) {
+                    return false; // This would create a winning opportunity for opponent
+                }
+            }
+            return true;
+        });
+
+        if (safeMoves.length > 0) {
+            possibleMoves = safeMoves;
+        }
+    }
+
+    // Fallback: Random move from remaining options
     return possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
 }
 
