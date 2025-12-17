@@ -7,8 +7,12 @@ const gameBoard = document.getElementById('game-board');
 const currentPlayerDisplay = document.getElementById('current-player-display');
 const nextBoardInfo = document.getElementById('next-board-info');
 const statusDiv = document.getElementById('status');
+const winModal = document.getElementById('win-modal');
+const winTitle = document.getElementById('win-title');
+const winMessage = document.getElementById('win-message');
 const newGameBtn = document.getElementById('new-game-btn');
 const backToMenuBtn = document.getElementById('back-to-menu-btn');
+const playAgainBtn = document.getElementById('play-again-btn');
 
 // Game state
 let gameState = {
@@ -28,8 +32,10 @@ function initGame() {
         currentPlayer: 0,
         nextBoard: null,
         winner: null,
+        winningCombination: null,
         playerNames: [player1Name, player2Name]
     };
+    winModal.classList.add('hidden');
     renderBoard();
     updateDisplay();
 }
@@ -50,6 +56,17 @@ function renderBoard() {
         // Mark won boards
         if (gameState.boardWinners[boardIndex]) {
             board.classList.add('won');
+            // Create overlay with winning symbol
+            const overlay = document.createElement('div');
+            overlay.className = 'board-overlay';
+            overlay.textContent = gameState.boardWinners[boardIndex];
+            overlay.classList.add(gameState.boardWinners[boardIndex].toLowerCase());
+            board.appendChild(overlay);
+        }
+
+        // Highlight winning combination
+        if (gameState.winningCombination && gameState.winningCombination.includes(boardIndex)) {
+            board.classList.add('winning-line');
         }
 
         for (let cellIndex = 0; cellIndex < 9; cellIndex++) {
@@ -102,7 +119,7 @@ function handleCellClick(e) {
         const overallWinner = checkOverallWinner();
         if (overallWinner) {
             gameState.winner = overallWinner;
-            showStatus(`${gameState.playerNames[overallWinner === 'X' ? 0 : 1]} wins the game!`, 'success');
+            showWinModal(overallWinner);
         } else {
             updateDisplay();
         }
@@ -188,9 +205,39 @@ function isBoardFull(board) {
     return board.every(cell => cell !== null);
 }
 
-// Check for overall winner
+// Check for overall winner and return winning info
 function checkOverallWinner() {
-    return checkSmallBoardWinner(gameState.boardWinners);
+    const winner = checkSmallBoardWinner(gameState.boardWinners);
+    if (winner) {
+        // Find the winning combination
+        gameState.winningCombination = findWinningCombination(gameState.boardWinners, winner);
+    }
+    return winner;
+}
+
+// Find which boards form the winning combination
+function findWinningCombination(boardWinners, winner) {
+    const winPatterns = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+        [0, 4, 8], [2, 4, 6] // diagonals
+    ];
+
+    for (const pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (boardWinners[a] === winner && boardWinners[b] === winner && boardWinners[c] === winner) {
+            return pattern;
+        }
+    }
+    return null;
+}
+
+// Show win modal
+function showWinModal(winner) {
+    const winnerName = gameState.playerNames[winner === 'X' ? 0 : 1];
+    winTitle.textContent = `${winnerName} Wins!`;
+    winMessage.textContent = `Congratulations ${winnerName}! You won the Ultimate Tic-Tac-Toe game.`;
+    winModal.classList.remove('hidden');
 }
 
 // Status message display
@@ -216,6 +263,11 @@ newGameBtn.addEventListener('click', () => {
     if (confirm('Start a new game?')) {
         initGame();
     }
+});
+
+playAgainBtn.addEventListener('click', () => {
+    winModal.classList.add('hidden');
+    initGame();
 });
 
 backToMenuBtn.addEventListener('click', () => {
